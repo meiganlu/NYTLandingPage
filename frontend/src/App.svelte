@@ -21,6 +21,7 @@
         <b>{today}</b><br />
         Today’s Paper
       </p>
+      <br>
     </div>
     <div class="logo-image">
       <img src="/NYTimeslogo.png" alt="The New York Times logo" />
