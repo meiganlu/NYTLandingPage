@@ -1,7 +1,7 @@
 <script lang="ts">
     import { onMount } from 'svelte';
-    import svelteLogo from './assets/svelte.svg';
-    import viteLogo from '/vite.svg';
+    // import svelteLogo from './assets/svelte.svg';
+    // import viteLogo from '/vite.svg';
     import Counter from './lib/Counter.svelte';
   
     let apiKey: string = '';
@@ -18,14 +18,14 @@
 </script>
   
 <main>
-    <div>
+    <!-- <div>
       <a href="https://vite.dev" target="_blank" rel="noreferrer">
         <img src={viteLogo} class="logo" alt="Vite Logo" />
       </a>
       <a href="https://svelte.dev" target="_blank" rel="noreferrer">
         <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
       </a>
-    </div>
+    </div> -->
   
 </main>
 
@@ -42,6 +42,7 @@
     <header>
         <div class="date">
             <p><b id="curr-date"></b> <br> Today's Paper </p>
+            <br>
         </div>
         <div class="logo-image">
             <img src="NYTimeslogo.png" alt="The New York Times" title="Logo">
