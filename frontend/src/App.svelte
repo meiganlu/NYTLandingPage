@@ -1,3 +1,34 @@
+<script lang="ts">
+    import { onMount } from 'svelte';
+    import svelteLogo from './assets/svelte.svg';
+    import viteLogo from '/vite.svg';
+    import Counter from './lib/Counter.svelte';
+  
+    let apiKey: string = '';
+  
+    onMount(async () => {
+      try {
+        const res = await fetch('/api/key');
+        const data = await res.json();
+        apiKey = data.apiKey;
+      } catch (error) {
+        console.error('Failed to fetch API key:', error);
+      }
+    });
+</script>
+  
+<main>
+    <div>
+      <a href="https://vite.dev" target="_blank" rel="noreferrer">
+        <img src={viteLogo} class="logo" alt="Vite Logo" />
+      </a>
+      <a href="https://svelte.dev" target="_blank" rel="noreferrer">
+        <img src={svelteLogo} class="logo svelte" alt="Svelte Logo" />
+      </a>
+    </div>
+  
+</main>
+
 <!DOCTYPE html>
 <html lang="zxx">
 <head>
