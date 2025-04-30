@@ -1,8 +1,13 @@
 from flask import Flask, jsonify, send_from_directory
 import os
 from flask_cors import CORS
+from dotenv import load_dotenv
 
-app = Flask(__name__, static_folder="static", template_folder="templates")
+load_dotenv()
+
+# app = Flask(__name__, static_folder="static", template_folder="templates")
+app = Flask(__name__, static_folder="dist", template_folder="dist")
+
 CORS(app)
 
 @app.route("/api/key")
