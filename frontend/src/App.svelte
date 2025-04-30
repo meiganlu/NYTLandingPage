@@ -2,8 +2,10 @@
   import { onMount } from 'svelte';
 
   let today = '';
+  let articles: any[] = [];
 
-  onMount(() => {
+  onMount(async () => {
+    // Format date
     const now = new Date();
     today = now.toLocaleDateString('en-US', {
       weekday: 'long',
@@ -11,6 +13,15 @@
       day: 'numeric',
       year: 'numeric',
     });
+
+    // Fetch articles from backend
+    try {
+      const res = await fetch('/api/local-news');
+      const data = await res.json();
+      articles = data.response.docs;
+    } catch (e) {
+      console.error('Failed to fetch NYT articles:', e);
+    }
   });
 </script>
 
@@ -30,32 +41,38 @@
   </header>
 
   <div class="main-container">
-    <!-- left column -->
-    <div class="left-column">
-      <img src="/junicat.png" alt="cat laying on window sill" />
-      <h2>Exceptuer Sint Occaecat Cupidatat Non Proident</h2>
-      <p>Lorem ipsum dolor sit amet...</p>
-      <hr />
-    </div>
-
-    <!-- mid column -->
+    <!-- Mid column: show first story -->
     <div class="mid-column">
-      <h1>Lorem Ipsum Dolor Sit Amet...</h1>
-      <p>Lorem ipsum dolor sit amet...</p>
-      <hr />
-      <img src="/BrooklynBridge.png" alt="Brooklyn Bridge" />
-      <h3>Lorem ipsum dolor sit amet...</h3>
-      <p>Lorem ipsum dolor sit amet...</p>
+      {#if articles.length > 0}
+        <h1><a href={articles[0].web_url} target="_blank">{articles[0].headline.main}</a></h1>
+        <p>{articles[0].abstract || articles[0].lead_paragraph}</p>
+        <hr />
+      {/if}
     </div>
-
-    <!-- right column -->
+  
+    <!-- Left column: next few stories -->
+    <div class="left-column">
+      {#each articles.slice(1, 4) as article}
+        <h2><a href={article.web_url} target="_blank">{article.headline.main}</a></h2>
+        <p>{article.abstract || article.lead_paragraph}</p>
+        <hr />
+      {/each}
+    </div>
+  
+    <!-- Right column: more stories -->
     <div class="right-column">
-      <img src="/mabelcat.png" alt="crying cat" />
-      <h2>Lorem Ipsum...</h2>
-      <p>Lorem ipsum dolor sit amet...</p>
-      <hr />
+      {#each articles.slice(1, 4) as article}
+        <div class="story">
+          {#if article.multimedia && article.multimedia.length > 0}
+            <img src={"https://static01.nyt.com/" + article.multimedia[0].url} alt="article" width="100%" />
+          {/if}
+          <h2><a href={article.web_url} target="_blank">{article.headline.main}</a></h2>
+          <p>{article.abstract || article.lead_paragraph}</p>
+          <hr />
+        </div>
+      {/each}
     </div>
-  </div>
+  </div>  
 
   <hr style="height: 3px; background-color: black; margin: 2% 2% 3% 2%" />
 </main>
