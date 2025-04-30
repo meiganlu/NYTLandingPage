@@ -1,105 +1,123 @@
 <script lang="ts">
-    import { onMount } from 'svelte';
-  
-    // let apiKey: string = '';
-    const apiKey = import.meta.env.NYT_API_KEY;
-    let articles: any[] = [];
-    let error: string = '';
-    let formattedDate: string = ''; 
-  
-    onMount(async () => {
-      const currdate = new Date();
-      const options: Intl.DateTimeFormatOptions = {
-        weekday: 'long',
-        year: 'numeric',
-        month: 'long',
-        day: 'numeric'
-      };
-      formattedDate = currdate.toLocaleDateString('en-US', options);
-      
-      try {
-        // const res = await fetch('/api/key');
-        // apiKey = data.apiKey;
-        const res = await fetch('/api/key');
-        const data = await res.json();
-        articles = data.response.docs;
-      } catch (error) {
-        console.error('Failed to fetch articles: ', error);
-      }
+  import { onMount } from 'svelte';
+
+  let today = '';
+  let articles: any[] = [];
+  let imageArticles: any[] = [];
+  let error = '';
+
+  function getImage(article: any): string | null {
+    if (article?.multimedia?.default?.url) {
+      return article.multimedia.default.url;
+    } else if (article?.multimedia?.thumbnail?.url) {
+      return article.multimedia.thumbnail.url;
+    }
+    return null;
+  }
+
+  onMount(async () => {
+    const now = new Date();
+    today = now.toLocaleDateString('en-US', {
+      weekday: 'long',
+      month: 'long',
+      day: 'numeric',
+      year: 'numeric',
     });
+
+    try {
+      const res = await fetch('http://localhost:8000/api/local-news');
+      const data = await res.json();
+      articles = data.response?.docs || [];
+      imageArticles = articles.filter(article => getImage(article));
+      console.log("Filtered image-backed articles:", imageArticles);
+    } catch (e) {
+      error = 'Failed to load articles';
+      console.error(e);
+    }
+  });
 </script>
 
-<header>
-  <div class="date">
-    <p><b>{formattedDate}</b> <br> Today's Paper</p>
-    <br>
-  </div>
-  <div class="logo-image">
-      <img src="NYTimeslogo.png" alt="The New York Times" title="Logo">
-  </div>
-  <hr style="margin: 1% 2% 1% 2%; width: 95%">
-</header>
+<main>
+  <header>
+    <div class="date">
+      <p><b>{today}</b><br/> Today’s Paper</p>
+      <br />
+    </div>
+    <div class="logo-image">
+      <img src="/NYTimeslogo.png" alt="The New York Times" />
+    </div>
+    <hr style="margin: 1% 2% 2% 2%; width: 95%" />
+  </header>
 
-<div class="main-container">
-  <div class="left-column">
-    {#each articles.slice(0, 2) as article}
-      <img src={"https://www.nytimes.com/" + article.multimedia[0]?.url} alt="Article " width="100%"/>
-      <h2>{article.headline.main}</h2>
-      <p>{article.snippet}</p>
-      <hr />
-    {/each}
-      <!-- <img src="junicat.png" alt="cat laying on window sill">
-      <h2> Exceptuer Sint Occaecat Cupidatat Non Proident </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-      <hr>
-     
-      <h2> Ut Enim Ad Minim Veniam, Quix Nostrud Excercitation Ulllamco Laboris Nisi Ut Aliquip Ex Ea Commodo Consequat </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-      <hr>
-      <br> -->
-  </div>
+  {#if imageArticles.length > 0}
+    <div class="main-container">
+      <div class="left-column">
+        {#each imageArticles.slice(2, 4) as article}
+          <img src={getImage(article)} alt={article.headline.main}/>
+          <h2>{article.headline.main}</h2>
+          <p>{article.abstract}</p>
+          <p>{article.lead_paragraph}</p>
+          <hr/>
+        {/each}
+      </div>
 
-  <div class="mid-column"> 
-      <h1> Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor Incididunt Ut Labore Et Dolore Magna Aliqua </h1>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-      <p> Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-      <hr>
+      <div class="mid-column">
+        <img src={getImage(imageArticles[0])} alt={imageArticles[0].headline.main}/>
+        <h1>{imageArticles[0].headline.main}</h1>
+        <p>{imageArticles[0].abstract}</p>
+        <p>{imageArticles[0].lead_paragraph}</p>
+        <hr style="margin: 1% 0% 5% 0%"/>
 
-      <img src="BrooklynBridge.png" alt="Brooklyn Bridge in between 2 buildings">
-      <h3> Lorem ipsum dolor sit amet, consectetur adipiscing elit </h3>
-      <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-      <br>
-  </div>
+        {#if imageArticles[1]}
+          <img src={getImage(imageArticles[1])} alt={imageArticles[1].headline.main}/>
+          <h3>{imageArticles[1].headline.main}</h3>
+          <p>{imageArticles[1].abstract}</p>
+          <p>{imageArticles[1].lead_paragraph}</p>
+        {/if}
+      </div>
 
-  <div class="right-column"> 
-      <img src="mabelcat.png" alt="crying cat on bed">
-      <h2> Loren Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit? </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-      <hr>  
-     
-      <h2> Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor Incididunt Ut Labore Et Dolore Magna Aliqua </h2>
-      <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-      <br>
-  </div>
+      <div class="right-column">
+        <img src={getImage(imageArticles[5])} alt={imageArticles[5].headline.main}/>
+        <h2>{imageArticles[5].headline.main}</h2>
+        <p>{imageArticles[5].abstract}</p>
+        <p>{imageArticles[5].lead_paragraph}</p>
+        <hr style="margin: 5% 0% 10% 0%"/>
 
-  <div class="side-columns">
-      <img src="junicat.png" alt="cat laying on window sill">
-      <h2> Exceptuer Sint Occaecat Cupidatat Non Proident </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-      <hr>
-     
-      <h2> Ut Enim Ad Minim Veniam, Quix Nostrud Excercitation Ulllamco Laboris Nisi Ut Aliquip Ex Ea Commodo Consequat </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p>
-      <hr> 
+        {#if imageArticles[7]}
+          <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
+          <h2>{imageArticles[7].headline.main}</h2>
+          <p>{imageArticles[7].abstract}</p>
+          <p>{imageArticles[7].lead_paragraph}</p>
+        {/if}
+      </div>
 
-      <img src="mabelcat.png" alt="crying cat on bed">
-      <h2> Loren Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit? </h2>
-      <p> Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. </p> 
-      <hr>  
-     
-      <h2> Lorem Ipsum Dolor Sit Amet, Consectetur Adipiscing Elit, Sed Do Eiusmod Tempor Incididunt Ut Labore Et Dolore Magna Aliqua </h2>
-      <p> Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum. </p>
-  </div>
-</div>
-<hr style="height: 3px; background-color:black; margin: 2% 2% 3% 2%;">
+      <div class="side-columns">
+        {#each imageArticles.slice(2, 4) as article}
+          <img src={getImage(article)} alt={article.headline.main}/>
+          <h2>{article.headline.main}</h2>
+          <p>{article.abstract}</p>
+          <p>{article.lead_paragraph}</p>
+          <hr />
+        {/each}
+
+        <img src={getImage(imageArticles[5])} alt={imageArticles[5].headline.main}/>
+        <h2>{imageArticles[5].headline.main}</h2>
+        <p>{imageArticles[5].abstract}</p>
+        <p>{imageArticles[5].lead_paragraph}</p>
+        <hr style="margin: 5% 0% 10% 0%"/>
+
+        {#if imageArticles[7]}
+          <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
+          <h2>{imageArticles[7].headline.main}</h2>
+          <p>{imageArticles[7].abstract}</p>
+          <p>{imageArticles[7].lead_paragraph}</p>
+        {/if}
+        <hr/>
+      </div>
+    </div>
+  {:else}
+    <p>Loading articles with images or not enough content available...</p>
+  {/if}
+  <hr style="height: 3px; background-color: black; margin: 2% 2% 3% 2%" />
+</main> 
 
