@@ -116,8 +116,7 @@
       </div>
     </div>
   {:else}
-    <p>Loading articles with images or not enough content available...</p>
+    <p>Loading articles...</p>
   {/if}
   <hr style="height: 3px; background-color: black; margin: 2% 2% 3% 2%" />
 </main> 
-
