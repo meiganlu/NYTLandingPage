@@ -25,8 +25,8 @@
     });
 
     try {
-      const res = await fetch('http://localhost:8000/api/local-news');
-      const data = await res.json();
+      const result = await fetch('http://localhost:8000/api/local-news');
+      const data = await result.json();
       articles = data.response?.docs || [];
       imageArticles = articles.filter(article => getImage(article));
       console.log("Filtered image-backed articles:", imageArticles);
@@ -53,13 +53,16 @@
   {#if imageArticles.length > 0}
     <div class="main-container">
       <div class="left-column">
-        {#each imageArticles.slice(2, 4) as article}
-          <img src={getImage(article)} alt={article.headline.main}/>
-          <h2>{article.headline.main}</h2>
-          <p>{article.abstract}</p>
-          <p>{article.lead_paragraph}</p>
-          <hr/>
-        {/each}
+        <img src={getImage(imageArticles[2])} alt={imageArticles[2].headline.main}/>
+        <h2>{imageArticles[2].headline.main}</h2>
+        <p>{imageArticles[2].abstract}</p>
+        <p>{imageArticles[2].lead_paragraph}</p>
+        <hr style="margin: 2% 0% 10% 0%"/>
+
+        <img src={getImage(imageArticles[3])} alt={imageArticles[3].headline.main}/>
+        <h2>{imageArticles[3].headline.main}</h2>
+        <p>{imageArticles[3].abstract}</p>
+        <p>{imageArticles[3].lead_paragraph}</p>
       </div>
 
       <div class="mid-column">
@@ -69,12 +72,10 @@
         <p>{imageArticles[0].lead_paragraph}</p>
         <hr style="margin: 1% 0% 5% 0%"/>
 
-        {#if imageArticles[1]}
-          <img src={getImage(imageArticles[1])} alt={imageArticles[1].headline.main}/>
-          <h3>{imageArticles[1].headline.main}</h3>
-          <p>{imageArticles[1].abstract}</p>
-          <p>{imageArticles[1].lead_paragraph}</p>
-        {/if}
+        <img src={getImage(imageArticles[1])} alt={imageArticles[1].headline.main}/>
+        <h3>{imageArticles[1].headline.main}</h3>
+        <p>{imageArticles[1].abstract}</p>
+        <p>{imageArticles[1].lead_paragraph}</p>
       </div>
 
       <div class="right-column">
@@ -82,24 +83,27 @@
         <h2>{imageArticles[5].headline.main}</h2>
         <p>{imageArticles[5].abstract}</p>
         <p>{imageArticles[5].lead_paragraph}</p>
-        <hr style="margin: 5% 0% 10% 0%"/>
+        <hr style="margin: 2% 0% 10% 0%"/>
 
-        {#if imageArticles[7]}
-          <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
-          <h2>{imageArticles[7].headline.main}</h2>
-          <p>{imageArticles[7].abstract}</p>
-          <p>{imageArticles[7].lead_paragraph}</p>
-        {/if}
+        <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
+        <h2>{imageArticles[7].headline.main}</h2>
+        <p>{imageArticles[7].abstract}</p>
+        <p>{imageArticles[7].lead_paragraph}</p>
+      
       </div>
 
       <div class="side-columns">
-        {#each imageArticles.slice(2, 4) as article}
-          <img src={getImage(article)} alt={article.headline.main}/>
-          <h2>{article.headline.main}</h2>
-          <p>{article.abstract}</p>
-          <p>{article.lead_paragraph}</p>
-          <hr />
-        {/each}
+        <img src={getImage(imageArticles[2])} alt={imageArticles[2].headline.main}/>
+        <h2>{imageArticles[2].headline.main}</h2>
+        <p>{imageArticles[2].abstract}</p>
+        <p>{imageArticles[2].lead_paragraph}</p>
+        <hr style="margin: 5% 0% 10% 0%"/>
+
+        <img src={getImage(imageArticles[3])} alt={imageArticles[3].headline.main}/>
+        <h2>{imageArticles[3].headline.main}</h2>
+        <p>{imageArticles[3].abstract}</p>
+        <p>{imageArticles[3].lead_paragraph}</p>
+        <hr style="margin: 5% 0% 10% 0%"/>
 
         <img src={getImage(imageArticles[5])} alt={imageArticles[5].headline.main}/>
         <h2>{imageArticles[5].headline.main}</h2>
@@ -107,13 +111,10 @@
         <p>{imageArticles[5].lead_paragraph}</p>
         <hr style="margin: 5% 0% 10% 0%"/>
 
-        {#if imageArticles[7]}
-          <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
-          <h2>{imageArticles[7].headline.main}</h2>
-          <p>{imageArticles[7].abstract}</p>
-          <p>{imageArticles[7].lead_paragraph}</p>
-        {/if}
-        <hr/>
+        <img src={getImage(imageArticles[7])} alt={imageArticles[7].headline.main}/>
+        <h2>{imageArticles[7].headline.main}</h2>
+        <p>{imageArticles[7].abstract}</p>
+        <p>{imageArticles[7].lead_paragraph}</p>
       </div>
     </div>
   {:else}
