@@ -20,8 +20,7 @@ def get_local_news():
 
     url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
     params = {
-        "q": "Sacramento",
-        # "sort": "newest",
+        "q": "Sacramento (Calif) OR Davis (Calif)",
         "api-key": api_key
     }
 

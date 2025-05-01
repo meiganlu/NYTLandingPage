@@ -43,6 +43,7 @@
       <p><b>{today}</b><br/> Today’s Paper</p>
       <br />
     </div>
+    <br>
     <div class="logo-image">
       <img src="/NYTimeslogo.png" alt="The New York Times" />
     </div>
