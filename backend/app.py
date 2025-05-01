@@ -1,9 +1,11 @@
-from flask import Flask, jsonify, send_from_directory, request
+from flask import Flask, jsonify, send_from_directory
 import os
 import requests
 from flask_cors import CORS
 from dotenv import load_dotenv
-load_dotenv()  # this reads from .env
+from datetime import datetime, timedelta
+
+load_dotenv() 
 
 app = Flask(__name__, static_folder="static", template_folder="templates")
 CORS(app, resources={r"/*": {"origins": ["http://localhost:5173", "http://127.0.0.1:5173"]}})
@@ -18,10 +20,15 @@ def get_local_news():
     if not api_key:
         return jsonify({"error": "API key not found"}), 500
 
+    end_date = datetime.now().strftime('%Y%m%d')
+    begin_date = (datetime.now() - timedelta(days=365)).strftime('%Y%m%d')  # Date up to 1 yr ago
+
     url = "https://api.nytimes.com/svc/search/v2/articlesearch.json"
     params = {
         "q": "Sacramento (Calif) OR Davis (Calif)",
-        "api-key": api_key
+        "api-key": api_key,
+        "begin_date": begin_date,
+        "end_date": end_date,
     }
 
     try:
